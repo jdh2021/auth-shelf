@@ -42,14 +42,24 @@ router.post('/', (req, res) => {
     res.sendStatus(403);
   }
 });
-  // endpoint functionality
 
 
 /**
  * Delete an item
  */
 router.delete('/:id', (req, res) => {
-  // endpoint functionality
+  console.log('Id to delete is:', req.params.id);
+  if (req.isAuthenticated()) {
+    const queryText = `DELETE FROM "item" WHERE "id" = $1 AND "user_id" = $2;`;
+    pool.query(queryText, [req.params.id, req.user.id]).then(() => {
+      res.sendStatus(201);
+    }).catch((e) => {
+      res.sendStatus(500);
+    })
+  } else {
+    res.sendStatus(403);
+  }
 });
+  // endpoint functionality
 
 module.exports = router;
